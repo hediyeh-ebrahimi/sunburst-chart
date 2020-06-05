@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>نمایش نمودار</title>
+<!--    <link rel="stylesheet" href="../static/css/bootstrap.min.css">-->
+<!--    <script src="../static/js/bootstrap.min.js"></script>-->
+<!--    <script src="../static/js/jquery.min.js"></script>-->
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        #chartdiv {
+            height: 450px;
+        }
+    </style>
+
+    <!-- Resources -->
+    <script th:src="@{/js/core.js}"></script>
+    <script th:src="@{/js/charts.js}"></script>
+    <script th:src="@{/js/sunburst.js}"></script>
+    <script th:src="@{/js/animated.js}"></script>
+
+
+</head>
+<body style="direction: rtl;">
+
+<div class="alert alert-success" th:if="${res_success}" style="margin: 2% 1%;">
+    <p>[[${res_success}]]</p>
+</div>
+
+<div class="container">
+    <h2></h2>
+    <ul class="nav nav-tabs" style="display:flex;">
+        <li class="active"><a data-toggle="tab" href="#home">أپارتمان</a></li>
+        <li><a data-toggle="tab" href="#menu1">آیتم</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <h2>ایجاد دپارتمان</h2>
+            <form class="form-horizontal" th:action="@{/adddept}" th:object="${department}" method="post">
+                <div class="form-group">
+                    <label for="deptname" style="width: 15%;display: inline-block;">نام دپارتمان:</label>
+                    <input type="text" style="width: 50%;display: inline-block;" class="form-control" id="deptname" placeholder="نام دپارتمان خود راوارد کنید" name="name">
+                    <p th:if="${#fields.errors('name')}" th:errors="*{name}" style="color: red;display: inline-block;"></p>
+
+                </div>
+
+                <div class="form-group">
+                    <label style="width: 15%;display: inline-block;" for="deptdesc">توضیحات دپارتمان:</label>
+                    <textarea name="description" id="deptdesc" style="width: 50%;resize: none;"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success" style="margin-right: 50%; width: 150px;">ایجاد</button>
+                <br/>
+                <br/>
+                <br/>
+
+            </form>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <h2>ایجاد آیتم</h2>
+            <form class="form-horizontal" th:action="@{/additem}" th:object="${item}" method="post">
+                <div class="form-group">
+                    <label for="itemname" style="width: 15%;display: inline-block;">نام آیتم:</label>
+                    <input type="text" style="width: 50%;display: inline-block;" class="form-control" id="itemname" placeholder="نام آیتم خود راوارد کنید" name="name">
+                    <p th:if="${#fields.errors('name')}" th:errors="*{name}" style="color: red;display: inline-block;"></p>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="itemdept" style="width: 15%;display: inline-block;">دپارتمان مربوطه:</label>
+                    <!--                <input type="text" style="width: 50%;display: inline-block;" class="form-control" id="itemname" placeholder="نام آیتم خود راوارد کنید" name="name">-->
+                    <!--                <select name="dept_id" id="itemdept"></select>-->
+                    <!--                <select th:field="*{dept_id}">-->
+                    <!--                <select name="dept_id" id="itemdept" class="form-control" style="width: 50%;display: inline-block;">-->
+                    <select name="department" id="itemdept" class="form-control" style="width: 50%;display: inline-block;">
+                        <option th:each="dip : ${deptall}"
+                                th:value="${dip.id}"
+                                th:text="${dip.name}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="percent" style="width: 15%;display: inline-block;">درصد:</label>
+                    <input type="number" step="0.5" min="0" max="100" style="width: 50%;display: inline-block;" class="form-control" id="percent" placeholder="درصد آیتم خود راوارد کنید" name="percent">
+                    <p th:if="${#fields.errors('percent')}" th:errors="*{percent}" style="color: red;display: inline-block;"></p>
+
+                </div>
+
+
+                <div class="form-group">
+                    <label style="width: 15%;display: inline-block;" for="deptdesc">توضیحات آیتم:</label>
+                    <textarea name="description" id="itemdesc" style="width: 50%;resize: none;" ></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success" style="margin-right: 50%; width: 150px;">ایجاد</button>
+                <br/>
+                <br/>
+                <br/>
+
+            </form>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="" style="margin:2% 1%;border: 1px solid #c6bcbc;">
+    <div class="container">
+        <h2>نمودار</h2>
+
+        <div id="chartdiv"></div>
+
+    </div>
+
+</div>
+
+<script>
+    am4core.ready(function() {
+
+        // Themes begin
+        am4core.useTheme(am4themes_animated);
+        // Themes end
+
+        // create chart
+        var chart = am4core.create("chartdiv", am4plugins_sunburst.Sunburst);
+        chart.padding(0,0,0,0);
+        chart.radius = am4core.percent(98);
+        var json = JSON.parse('[[${chartData}]]'.replace(/&quot;/g,'\"'));
+        chart.data = json;
+
+        chart.colors.step = 2;
+        chart.fontSize = 11;
+        chart.innerRadius = am4core.percent(10);
+
+        // define data fields
+        chart.dataFields.value = "value";
+        chart.dataFields.name = "name";
+        chart.dataFields.children = "children";
+
+        var level0SeriesTemplate = new am4plugins_sunburst.SunburstSeries();
+        level0SeriesTemplate.hiddenInLegend = false;
+        chart.seriesTemplates.setKey("0", level0SeriesTemplate)
+
+        // this makes labels to be hidden if they don't fit
+        level0SeriesTemplate.labels.template.truncate = true;
+        level0SeriesTemplate.labels.template.hideOversized = true;
+
+        level0SeriesTemplate.labels.template.adapter.add("rotation", function(rotation, target) {
+            target.maxWidth = target.dataItem.slice.radius - target.dataItem.slice.innerRadius - 10;
+            target.maxHeight = Math.abs(target.dataItem.slice.arc * (target.dataItem.slice.innerRadius + target.dataItem.slice.radius) / 2 * am4core.math.RADIANS);
+
+            return rotation;
+        })
+
+        var level1SeriesTemplate = level0SeriesTemplate.clone();
+        chart.seriesTemplates.setKey("1", level1SeriesTemplate)
+        level1SeriesTemplate.fillOpacity = 0.75;
+        level1SeriesTemplate.hiddenInLegend = true;
+
+        var level2SeriesTemplate = level0SeriesTemplate.clone();
+        chart.seriesTemplates.setKey("2", level2SeriesTemplate)
+        level2SeriesTemplate.fillOpacity = 0.5;
+        level2SeriesTemplate.hiddenInLegend = true;
+
+        chart.legend = new am4charts.Legend();
+
+    });
+</script>
+
+</body>
+</html>
