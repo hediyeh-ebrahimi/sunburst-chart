@@ -19,7 +19,6 @@ public class Department {
     private Long id;
     @Column(columnDefinition = "varchar2(15)")
     @Size(min = 3,max = 15,message = "نام دپارتمان بین 3 تا 15 کاراکتر مورد نظر می باشد.")
-//    @Unique(message = "نام دپارتمان یکتا می باشد")
     private String name;
     @Lob
     private String description;

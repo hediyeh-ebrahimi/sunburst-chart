@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 
@@ -18,8 +19,13 @@ public class Item {
     private Long id;
 
     @Column(columnDefinition = "varchar2(20)")
+    @Size(
+            min = 2,
+            max = 15,
+            message = "تعداد کاراکتر مورد نظر بین 2 تا 15 می باشد"
+    )
     private String name;
-    @Column(columnDefinition = "Decimal(10,2) default 0")
+    @Column(columnDefinition = "Decimal(10,2) default 0.00")
     @Min(value = 0,message = "مقدار درصد آیتم بین 0 تا 100 می باشد")
     @Max(value=100,message="مقدار درصد آیتم بین 0 تا 100 می باشد")
     private Double percent;

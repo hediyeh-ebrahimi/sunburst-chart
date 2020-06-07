@@ -7,6 +7,9 @@ public class Children {
     private String name;
     private Double value;
 
+    public Children() {
+    }
+
     public Children(String name, Double value) {
         this.name = name;
         this.value = value;
