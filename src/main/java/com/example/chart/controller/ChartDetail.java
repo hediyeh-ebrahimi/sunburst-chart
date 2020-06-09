@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,6 @@ public class ChartDetail {
 
     @Autowired
     private ItemRepository itemRepository;
-
 
 
     @RequestMapping("/")
@@ -49,7 +49,7 @@ public class ChartDetail {
 
         String json = createChartData();
 
-        System.out.println("JSON OUT "+ json+"------------");
+//        System.out.println("JSON OUT "+ json+"------------");
         model.addAttribute("chartData",json);
         return "index";
     }
@@ -83,7 +83,7 @@ public class ChartDetail {
     }
 
     @RequestMapping(value = "/adddept",method = RequestMethod.POST)
-    public String addDept(@ModelAttribute("department") @Valid Department department, BindingResult bindingResult,RedirectAttributes redirectAttributes,Model model){
+    public String addDept(@ModelAttribute("department") @Valid Department department, BindingResult bindingResult, RedirectAttributes redirectAttributes, Model model, HttpSession httpSession){
         String json = createChartData();
         model.addAttribute("chartData",json);
         model.addAttribute("item",new Item());
@@ -119,7 +119,6 @@ public class ChartDetail {
             if(deptId == 0){
                 FieldError fieldError = new FieldError("department","department","دپارتمان مورد نظر را مشخص کنید");
                 bindingResult.addError(fieldError);
-//
             }
             for (Object object : bindingResult.getAllErrors()) {
                 if(object instanceof FieldError) {

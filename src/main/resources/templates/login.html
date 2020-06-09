@@ -19,7 +19,7 @@
 <div class="limiter">
     <div class="container-login100">
         <div class="wrap-login100 p-b-20" style="direction: rtl;">
-            <form class="login100-form validate-form" style="margin-bottom: 220px;" th:action="@{/login}" method="post">
+            <form class="login100-form validate-form" style="margin-bottom: 220px;" th:action="@{/submitlogin}" method="post">
 
                 <span class="login100-form-avatar">
 						<img th:src="@{/login/images/login.jpg}" alt="AVATAR">
@@ -39,6 +39,10 @@
                     [[${error}]]
                 </div>
 
+                <div class="alert alert-success" th:if="${success_res}">
+                    [[${success_res}]]
+                </div>
+
                 <div class="container-login100-form-btn">
                     <button class="btn btn-success" style="width: 40%;text-align: center;">
                        ورود
@@ -47,6 +51,10 @@
 <!--                    <a th:href="@{/register}" class="btn btn-primary" style="width: 40%;text-align: center;margin-right: 36px;">-->
 <!--                        ثبت نام-->
 <!--                    </a>-->
+
+                    <a data-toggle="modal" data-target="#modal-register" th:attr="data-target='#modal-register'" class="btn btn-primary" style="width: 40%;text-align: center;margin-right: 36px;">
+                         ثبت نام
+                    </a>
                 </div>
 
             </form>
@@ -67,7 +75,30 @@
 <script th:src="@{/login/js/main.js}"></script>
 <script th:src="@{/js/bootstrap.min.js}"></script>
 
-
+<div class="modal modal-register fade in" th:id="modal-register" >
+    <div class="modal-dialog" style="direction: rtl;margin-top: 8%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="float: left;">
+                    <span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">ایجاد ادمین</h5>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/register}" method="post" class="form-group">
+                    <label>نام کاربری:</label><input name="username" type="text" required class="form-control" style="width: 52%;display: inline-block;margin: 12px;">
+                    <br/>
+                    <label>رمز عبور:</label><input name="password" type="password" required class="form-control" style="width: 52%;display: inline-block;margin: 12px;">
+                    <br/>
+                    <br/>
+                    <input type="submit" value="ثبت" class="btn btn-success" style="margin-right: 50%;width: 80px;">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-danger pull-left" data-dismiss="modal">بستن</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
 
